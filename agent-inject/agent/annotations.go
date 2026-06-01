@@ -524,7 +524,7 @@ func Init(pod *corev1.Pod, cfg AgentConfig) error {
 		if pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable] == "" {
 			pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable] = strconv.FormatBool(cfg.CacheEnable)
 		} else if _, err := parseutil.ParseBool(pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable]); err != nil {
-			pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable] = strconv.FormatBool(cfg.CacheEnable)
+			return fmt.Errorf("invalid value for annotation %q: %w", AnnotationAgentCacheEnable, err)
 		}
 	} else {
 		pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable] = strconv.FormatBool(cfg.CacheEnable)

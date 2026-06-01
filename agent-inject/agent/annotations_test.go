@@ -156,9 +156,8 @@ func TestInitCacheEnableInvalidAnnotationFallsBackToGlobalDefault(t *testing.T) 
 	agentConfig.CacheEnable = true
 
 	err := Init(pod, agentConfig)
-	require.NoError(t, err)
-
-	assert.Equal(t, "true", pod.Annotations[AnnotationAgentCacheEnable])
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "invalid value")
 }
 
 func TestInitError(t *testing.T) {
