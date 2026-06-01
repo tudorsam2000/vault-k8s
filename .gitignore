@@ -23,3 +23,11 @@
 scratch/
 build/
 vault-helm/
+
+# SpecKit framework files (do not commit)
+.github/agents/
+.github/prompts/
+.github/copilot-instructions.md
+.specify/
+.vscode/
+specs/

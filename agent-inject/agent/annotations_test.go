@@ -118,6 +118,49 @@ func TestInitDefaults(t *testing.T) {
 	}
 }
 
+func TestInitCacheEnableWithAnnotationOverridesGlobalDefault(t *testing.T) {
+	annotations := map[string]string{
+		AnnotationAgentCacheEnable: "false",
+	}
+	pod := testPod(annotations)
+
+	agentConfig := basicAgentConfig()
+	agentConfig.CacheEnable = true
+
+	err := Init(pod, agentConfig)
+	require.NoError(t, err)
+
+	assert.Equal(t, "false", pod.Annotations[AnnotationAgentCacheEnable])
+}
+
+func TestInitCacheEnableFallsBackToGlobalConfig(t *testing.T) {
+	annotations := make(map[string]string)
+	pod := testPod(annotations)
+
+	agentConfig := basicAgentConfig()
+	agentConfig.CacheEnable = true
+
+	err := Init(pod, agentConfig)
+	require.NoError(t, err)
+
+	assert.Equal(t, "true", pod.Annotations[AnnotationAgentCacheEnable])
+}
+
+func TestInitCacheEnableInvalidAnnotationFallsBackToGlobalDefault(t *testing.T) {
+	annotations := map[string]string{
+		AnnotationAgentCacheEnable: "yes",
+	}
+	pod := testPod(annotations)
+
+	agentConfig := basicAgentConfig()
+	agentConfig.CacheEnable = true
+
+	err := Init(pod, agentConfig)
+	require.NoError(t, err)
+
+	assert.Equal(t, "true", pod.Annotations[AnnotationAgentCacheEnable])
+}
+
 func TestInitError(t *testing.T) {
 	annotations := make(map[string]string)
 	pod := testPod(annotations)

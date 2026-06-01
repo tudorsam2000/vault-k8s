@@ -375,6 +375,7 @@ type AgentConfig struct {
 	AuthMaxBackoff             string
 	DisableIdleConnections     string
 	DisableKeepAlives          string
+	CacheEnable                bool
 }
 
 // Init configures the expected annotations required to create a new instance
@@ -519,8 +520,14 @@ func Init(pod *corev1.Pod, cfg AgentConfig) error {
 		pod.ObjectMeta.Annotations[AnnotationAgentSetSecurityContext] = strconv.FormatBool(true)
 	}
 
-	if _, ok := pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable]; !ok {
-		pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable] = DefaultAgentCacheEnable
+	if _, ok := pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable]; ok {
+		if pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable] == "" {
+			pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable] = strconv.FormatBool(cfg.CacheEnable)
+		} else if _, err := parseutil.ParseBool(pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable]); err != nil {
+			pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable] = strconv.FormatBool(cfg.CacheEnable)
+		}
+	} else {
+		pod.ObjectMeta.Annotations[AnnotationAgentCacheEnable] = strconv.FormatBool(cfg.CacheEnable)
 	}
 
 	if _, ok := pod.ObjectMeta.Annotations[AnnotationAgentCacheListenerPort]; !ok {

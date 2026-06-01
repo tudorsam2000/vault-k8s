@@ -152,6 +152,9 @@ type Specification struct {
 
 	// DisableKeepAlives is the AGENT_INJECT_DISABLE_KEEP_ALIVES environment variable
 	DisableKeepAlives string `split_words:"true"`
+
+	// CacheEnable is the AGENT_INJECT_CACHE_ENABLE environment variable.
+	CacheEnable string `split_words:"true"`
 }
 
 func (c *Command) init() {
@@ -201,6 +204,8 @@ func (c *Command) init() {
 			"Defaults to false.")
 	c.flagSet.BoolVar(&c.flagSetSecurityContext, "set-security-context", agent.DefaultAgentSetSecurityContext,
 		fmt.Sprintf("Set SecurityContext in injected containers. Defaults to %v.", agent.DefaultAgentSetSecurityContext))
+	c.flagSet.BoolVar(&c.flagCacheEnable, "cache-enable", false,
+		"Enable Vault Agent cache by default for injected pods. Pod annotation vault.hashicorp.com/agent-cache-enable still takes precedence.")
 	c.flagSet.StringVar(&c.flagTelemetryPath, "telemetry-path", "",
 		"Path under which to expose metrics")
 	c.flagSet.BoolVar(&c.flagUseLeaderElector, "use-leader-elector", agent.DefaultAgentUseLeaderElector,
@@ -460,6 +465,13 @@ func (c *Command) parseEnvs() error {
 
 	if envs.DisableKeepAlives != "" {
 		c.flagDisableKeepAlives = envs.DisableKeepAlives
+	}
+
+	if envs.CacheEnable != "" {
+		c.flagCacheEnable, err = parseutil.ParseBool(envs.CacheEnable)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

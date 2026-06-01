@@ -180,6 +180,8 @@ func TestCommandEnvBools(t *testing.T) {
 		{env: "AGENT_INJECT_USE_LEADER_ELECTOR", value: false, cmdPtr: &cmd.flagUseLeaderElector},
 		{env: "AGENT_INJECT_TEMPLATE_CONFIG_EXIT_ON_RETRY_FAILURE", value: true, cmdPtr: &cmd.flagExitOnRetryFailure},
 		{env: "AGENT_INJECT_TEMPLATE_CONFIG_EXIT_ON_RETRY_FAILURE", value: false, cmdPtr: &cmd.flagExitOnRetryFailure},
+		{env: "AGENT_INJECT_CACHE_ENABLE", value: true, cmdPtr: &cmd.flagCacheEnable},
+		{env: "AGENT_INJECT_CACHE_ENABLE", value: false, cmdPtr: &cmd.flagCacheEnable},
 	}
 
 	for _, tt := range tests {
@@ -197,6 +199,18 @@ func TestCommandEnvBools(t *testing.T) {
 				t.Errorf("env wasn't parsed, should have been: got %t, expected %t", *tt.cmdPtr, tt.value)
 			}
 		})
+	}
+}
+
+func TestCommandEnvBoolInvalid(t *testing.T) {
+	var cmd Command
+	if err := os.Setenv("AGENT_INJECT_CACHE_ENABLE", "yes"); err != nil {
+		t.Fatalf("got error setting env, shouldn't have: %s", err)
+	}
+	defer os.Unsetenv("AGENT_INJECT_CACHE_ENABLE")
+
+	if err := cmd.parseEnvs(); err == nil {
+		t.Fatal("expected error parsing invalid boolean env var, got none")
 	}
 }
 

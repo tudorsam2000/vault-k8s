@@ -62,3 +62,27 @@ func TestTLSConfig(t *testing.T) {
 		})
 	}
 }
+
+func TestCommandCacheEnableFlag(t *testing.T) {
+	tests := []struct {
+		args    []string
+		expected bool
+	}{
+		{args: []string{}, expected: false},
+		{args: []string{"--cache-enable=true"}, expected: true},
+		{args: []string{"--cache-enable=false"}, expected: false},
+	}
+
+	for _, tt := range tests {
+		c := &Command{}
+		c.init()
+		if err := c.flagSet.Parse(tt.args); err != nil {
+			t.Fatalf("got error parsing flags %v: %s", tt.args, err)
+		}
+
+		if c.flagCacheEnable != tt.expected {
+			t.Fatalf("expected cache enable flag to be %v, got %v", tt.expected, c.flagCacheEnable)
+		}
+	}
+}
+

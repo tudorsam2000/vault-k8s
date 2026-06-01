@@ -13,6 +13,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestAgentConfigCacheEnable(t *testing.T) {
+	agentConfig := AgentConfig{CacheEnable: true}
+	assert.True(t, agentConfig.CacheEnable)
+}
+
 func TestNewConfig(t *testing.T) {
 	annotations := map[string]string{
 		AnnotationAgentImage:                            "vault",

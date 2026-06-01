@@ -79,6 +79,7 @@ type Handler struct {
 	AuthMaxBackoff             string
 	DisableIdleConnections     string
 	DisableKeepAlives          string
+	CacheEnable                bool
 }
 
 // Handle is the http.HandlerFunc implementation that actually handles the

@@ -69,6 +69,7 @@ type Command struct {
 	flagRunAsGroup                 string   // Group (gid) to run Vault agent as
 	flagRunAsSameUser              bool     // Run Vault agent as the User (uid) of the first application container
 	flagSetSecurityContext         bool     // Set SecurityContext in injected containers
+	flagCacheEnable                bool     // Enable Vault Agent cache by default for injected pods
 	flagTelemetryPath              string   // Path under which to expose metrics
 	flagUseLeaderElector           bool     // Use leader elector code
 	flagDefaultTemplate            string   // Toggles which default template to use
@@ -209,6 +210,7 @@ func (c *Command) Run(args []string) int {
 		RequireAnnotation:          true,
 		Log:                        logger,
 		RevokeOnShutdown:           c.flagRevokeOnShutdown,
+		CacheEnable:                c.flagCacheEnable,
 		UserID:                     c.flagRunAsUser,
 		GroupID:                    c.flagRunAsGroup,
 		SameID:                     c.flagRunAsSameUser,
